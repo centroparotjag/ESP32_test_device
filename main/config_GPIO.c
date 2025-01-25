@@ -34,7 +34,6 @@
 #include "config_GPIO.h"
 
 void init_GPIO (void){
-	
 	gpio_pad_select_gpio(POW_DS_DH);
 	gpio_set_direction(POW_DS_DH, GPIO_MODE_OUTPUT);
 	gpio_set_level(POW_DS_DH, 0);
