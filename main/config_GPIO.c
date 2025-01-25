@@ -24,8 +24,8 @@
 //         |D13          D15| --> DATA DHT11                        //
 //         |GND          GND| --> GND                               //
 // +5V <-- |VIN          3V3| --> +3V3                              //
-//          ----------------                                        //
-//                                                                  //
+//   |      ----------------                                        //
+//   LED WS2812D-F5                                                 //
 //////////////////////////////////////////////////////////////////////
 
 #include <driver/gpio.h>
@@ -40,7 +40,7 @@ void init_GPIO (void){
 	
 	gpio_pad_select_gpio(DATA_2LED);
 	gpio_set_direction(DATA_2LED, GPIO_MODE_OUTPUT);
-	gpio_set_level(DATA_2LED, 0);
+	gpio_set_level(DATA_2LED, 1);
 		
 	gpio_pad_select_gpio(DQ_DS);
 	gpio_set_direction(DQ_DS, GPIO_MODE_INPUT_OUTPUT_OD);

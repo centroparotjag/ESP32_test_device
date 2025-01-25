@@ -36,6 +36,8 @@
 	#define LED_D2		2	// led is connected to D2
 	#define DQ_DH		15	// DATA DHT11 
 	
+	
+	
 	void init_GPIO (void);
 
 #endif /* MAIN_CONFIG_GPIO_H_ */
