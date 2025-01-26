@@ -44,6 +44,8 @@ void init_GPIO (void){
 		
 	gpio_pad_select_gpio(DQ_DS);
 	gpio_set_direction(DQ_DS, GPIO_MODE_INPUT_OUTPUT_OD);
+	gpio_pulldown_dis(DQ_DS);
+	gpio_pullup_en(DQ_DS);
 	gpio_set_level(DQ_DS, 1);
 	
 	gpio_pad_select_gpio(LED_D2);
@@ -52,6 +54,7 @@ void init_GPIO (void){
 	
 	gpio_pad_select_gpio(DQ_DH);
 	gpio_set_direction(DQ_DH, GPIO_MODE_INPUT_OUTPUT_OD);
+	gpio_pulldown_dis(DQ_DH);
 	gpio_set_level(DQ_DH, 1);
 }
 

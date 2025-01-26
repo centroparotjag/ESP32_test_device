@@ -80,3 +80,37 @@ void led_data (uint8_t R, uint8_t G, uint8_t B){
 		tx_bit (arr[i]);
 	}
 }
+
+
+uint8_t R1, G1, B1, R2, G2, B2;
+
+void led_all_RGB (void){
+	uint8_t arr1[24], arr2[24];
+		
+	convert_RGB_to_1barray ( R1, G1, B1, &arr1);
+	convert_RGB_to_1barray ( R2, G2, B2, &arr2);
+	
+	reset ();
+	for (int i=0; i<24; i++) {
+		tx_bit (arr1[i]);
+	}
+	for (int i=0; i<24; i++) {
+		tx_bit (arr2[i]);
+	}
+	
+}
+
+void LED_1_RGB (uint8_t R, uint8_t G, uint8_t B){
+	R1=R;
+	G1=G;
+	B1=B;
+	led_all_RGB ();
+}
+
+void LED_2_RGB (uint8_t R, uint8_t G, uint8_t B){
+	R2=R;
+	G2=G;
+	B2=B;
+	led_all_RGB ();
+}
+

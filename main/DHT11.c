@@ -120,7 +120,7 @@ int get_T_Rh_DHT11 (float *T, uint8_t *Rh){
 		data[i] = (uint8_t) get_data_bit_DHT11 ();
 	}
 	//----------- Power off --------------------------------------
-	gpio_set_level(POW_DS_DH, 0);
+	//gpio_set_level(POW_DS_DH, 0);
 	//------------------------------------------------------------
 	int status = covert_data_DHT11 (&data, &t, &r);
 	

@@ -19,6 +19,7 @@
 void i2c_master_init(void);
 int8_t FM24CL_wr_byte (uint8_t dev_addr, uint8_t reg_addr, uint8_t* reg_data, uint8_t cnt);
 int8_t FM24CL_read_byte(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt);
+void scan_i2c_addr (void);
 
 #define ADDRESS_FM24CL04B	0xA0>>1 
 #define ADDRESS_BM180		0xEE>>1 
