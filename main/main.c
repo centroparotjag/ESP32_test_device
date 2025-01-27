@@ -13,15 +13,16 @@
 #include "WS2812D.h"
 #include "config_GPIO.h"
 #include "foo_I2C.h"
+#include "statistics.h"
 
 // loop task
 void loop_task(void *pvParameter)
 {
 	while(1) {
-		gpio_set_level(LED_D2, gpio_get_level(DQ_DH));
-		gpio_set_level(LED_D2, gpio_get_level(DQ_DS));
-		vTaskDelay(200/portTICK_PERIOD_MS);
+		vTaskDelay(1000/portTICK_PERIOD_MS);
+		PowerOnHours_update_set_RAM ();
 		
+
 	}
 }
 
@@ -35,7 +36,18 @@ void app_main(void)
 	init_GPIO ();
 	i2c_master_init();
 	check_I2C_device ();
+	PowerOnCount_set_1_count_in_FRAM();
+	print_PowerOnCount();
+	counting_time_PowerOnHours();
+	print_Uptime();
 	xTaskCreate(&loop_task, "loop_task", 2048, NULL, 5, NULL);
+
+
+
+	
+//	uint8_t data[4] = {0xFF, 0xFF, 0xFF, 0x00};
+//	write_data_FM24CL04(0x0010, &data, 4);
+
 
     while (true) {
 
@@ -53,6 +65,12 @@ void app_main(void)
 		}
 		
         sleep (10);
+        
+        printf("\r\nStaistics \r\n");
+        print_PowerOnCount();
+		counting_time_PowerOnHours();
+		print_Uptime();
+		printf("\r\n");
 
     }
 }
