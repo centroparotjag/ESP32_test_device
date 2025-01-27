@@ -29,7 +29,7 @@ unsigned char DS18B20_RESET_PRESENCE(void)
 	usleep (60);								// 60u
 	STATUS_PRESENCE = gpio_get_level(DQ_DS);
 	if(STATUS_PRESENCE == 1){
-		printf("DS18B20 PRESENCE - ERROR!");
+		printf("ERROR - DS18B20 not presence!!!");
 	}
 	usleep (600);								// 600u
 	return STATUS_PRESENCE;
@@ -314,11 +314,9 @@ void t_ds18b20 (float* t, uint8_t h_b, uint8_t l_b){
 
 	int status = SCRATCHPAD_READ(scratchpad);
 
-	printf("\n");
-	
 	t_ds18b20 (&T, scratchpad[1], scratchpad[0]);
 	
-	printf ("DS18B20 T = %.2fC\n", T);
+	printf ("DS18B20 T = %.1fC\n", T);
 	
 	return status;
 }

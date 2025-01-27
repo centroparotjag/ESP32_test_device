@@ -30,12 +30,14 @@
 #ifndef MAIN_CONFIG_GPIO_H_
 #define MAIN_CONFIG_GPIO_H_
 
+	#define GPIO_SCL	22	// I2C SCL
+	#define GPIO_SDA	21	// I2C SDA
 	#define POW_DS_DH	17	// +3V3 power DS18B20 and DHT11
 	#define DATA_2LED	16	// DATA, 2 address LED WS2812D-F5 
 	#define DQ_DS		4	// DQ DS18B20 
 	#define LED_D2		2	// led is connected to D2
 	#define DQ_DH		15	// DATA DHT11 
-	
+
 	
 	
 	void init_GPIO (void);

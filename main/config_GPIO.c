@@ -56,6 +56,13 @@ void init_GPIO (void){
 	gpio_set_direction(DQ_DH, GPIO_MODE_INPUT_OUTPUT_OD);
 	gpio_pulldown_dis(DQ_DH);
 	gpio_set_level(DQ_DH, 1);
+	
+	//------------- I2C -------------------
+	gpio_pulldown_dis(GPIO_SCL);
+	gpio_pullup_en(GPIO_SCL);
+	gpio_pulldown_dis(GPIO_SDA);
+	gpio_pullup_en(GPIO_SDA);
+	
 }
 
 

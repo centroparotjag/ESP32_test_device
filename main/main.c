@@ -18,19 +18,10 @@
 void loop_task(void *pvParameter)
 {
 	while(1) {
-/*		LED_1_RGB (0, 2, 0);
-		LED_2_RGB (3, 0, 0);
-		vTaskDelay(200/portTICK_PERIOD_MS);
-		LED_1_RGB (0, 0, 4);
-		LED_2_RGB (0, 2, 0);
-		vTaskDelay(200/portTICK_PERIOD_MS);
-		LED_1_RGB (3, 0, 0);
-		LED_2_RGB (0, 0, 4);
-		vTaskDelay(200/portTICK_PERIOD_MS);	*/
-		
 		gpio_set_level(LED_D2, gpio_get_level(DQ_DH));
 		gpio_set_level(LED_D2, gpio_get_level(DQ_DS));
-		vTaskDelay(15/portTICK_PERIOD_MS);
+		vTaskDelay(200/portTICK_PERIOD_MS);
+		
 	}
 }
 
@@ -39,15 +30,13 @@ void app_main(void)
 {
 	float T; 
     uint8_t Rh;
-	
-	
+    sleep (1);
+	printf("Startup\n");
 	init_GPIO ();
+	i2c_master_init();
+	check_I2C_device ();
 	xTaskCreate(&loop_task, "loop_task", 2048, NULL, 5, NULL);
 
-	sleep (1);
-	
-	printf("Startup\n");
-	
     while (true) {
 
 		LED_1_RGB (50, 0, 0);
@@ -60,10 +49,10 @@ void app_main(void)
 		
 		gpio_set_level(POW_DS_DH, 0);
 		if(status==1) {
-			printf("*DHT11: T = %.1fC, Rh = %d%%\n", T, Rh);
+			printf("DHT11   T = %.1fC, Rh = %d%%\n", T, Rh);
 		}
 		
-        sleep (5);
+        sleep (10);
 
     }
 }

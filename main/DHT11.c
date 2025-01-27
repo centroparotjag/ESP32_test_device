@@ -106,7 +106,7 @@ int get_T_Rh_DHT11 (float *T, uint8_t *Rh){
 		// response - ok!
 	}
 	else {
-		printf ("DHT11 Response signal - ERROR!\n");
+		printf ("ERROR - DHT11 not response signal!!!\n");
 		return -1;
 	}
 	l = 0;
