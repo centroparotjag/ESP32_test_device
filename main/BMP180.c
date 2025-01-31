@@ -21,27 +21,29 @@ void getPressure_BMP180 (int* Tmp, unsigned int* Pr){
 	
 	//------------- soft reset --------------------
 	write_byte_BMP180 (0xE0, 0xB6);				// soft reset
-	vTaskDelay(50/portTICK_PERIOD_MS);		// 1ms;
-	read_data_BMP180 (0xAA, data, 22);	
-	short AC1 = (data[0]<<8)  + data[1];
-	short AC2 = (data[2]<<8)  + data[3];
-	short AC3 = (data[4]<<8)  + data[5];
-	ushort AC4 = (data[6]<<8)  + data[7];
-	ushort AC5 = (data[8]<<8)  + data[9];
-	ushort AC6 = (data[10]<<8) + data[11];
-	short B1  = (data[12]<<8) + data[13];
-	short B2  = (data[14]<<8) + data[15];
-	//short MB  = (data[16]<<8) + data[17];
-	short MC  = (data[18]<<8) + data[19];
-	short MD  = (data[20]<<8) + data[21];
+	vTaskDelay(20/portTICK_PERIOD_MS);		// 20ms;
 	
-	// Read uncompensated temperature value
+	//-------- read calibration data --------------
+	read_data_BMP180 (0xAA, data, 22);	
+	short	AC1 = (data[0]<<8)  + data[1];
+	short	AC2 = (data[2]<<8)  + data[3];
+	short	AC3 = (data[4]<<8)  + data[5];
+	ushort	AC4 = (data[6]<<8)  + data[7];
+	ushort	AC5 = (data[8]<<8)  + data[9];
+	ushort	AC6 = (data[10]<<8) + data[11];
+	short	B1  = (data[12]<<8) + data[13];
+	short	B2  = (data[14]<<8) + data[15];
+	//short	MB  = (data[16]<<8) + data[17];
+	short	MC  = (data[18]<<8) + data[19];
+	short	MD  = (data[20]<<8) + data[21];
+	
+	//---- Read uncompensated temperature value ----
 	write_byte_BMP180 (0xF4, 0x2E);				// start convert T
 	vTaskDelay(10/portTICK_PERIOD_MS);		// 10ms;
 	read_data_BMP180 (0xF6, c, 2);			// read T
 	long UT = (c[0]<<8) + c[1];
 	
-	// Read uncompensated pressure value
+	//---- Read uncompensated pressure value -----
 	short oss = 3;											// oss = 0b11 ( 8 times oversampling ratio ) 
 	write_byte_BMP180 (0xF4, 0x34+(oss<<6));	// start convert P
 	vTaskDelay(30/portTICK_PERIOD_MS);		// 30ms;
