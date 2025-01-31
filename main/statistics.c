@@ -47,7 +47,6 @@ void counting_time_PowerOnHours(void){
 	printf("Power On Hours: %0luh:%02dm:%02ds\r\n", (long)H, (uint8_t)m, (uint8_t)sec);
 }
 
-
 //================= Uptime ====================
 void init_counter_Uptime (const uint32_t* PowOnH){
 	if(start_time == 0){
@@ -65,11 +64,6 @@ void print_Uptime(void){
 	sec = s;
 	printf("Uptime: %0luh:%02dm:%02ds\r\n", (long)H, (uint8_t)m, (uint8_t)sec);
 }
-
-
-
-
-
 
 //============= Power On Count ================
 uint32_t PowerOnCount_GET_FRAM (void){

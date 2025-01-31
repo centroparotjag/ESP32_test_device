@@ -169,5 +169,35 @@ void read_data_FM24CL04 (uint16_t addr, uint8_t *data, uint16_t len){
 }
 
 
+//======================= BMP180 ===============================
+void read_data_BMP180 (uint16_t addr, uint8_t *data, uint8_t len){
+	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+	i2c_master_start(cmd);
+	i2c_master_write_byte(cmd, ADDRESS_BM180<<1, true);
+	i2c_master_write_byte(cmd, addr, true);
+	
+	i2c_master_start(cmd);
+	i2c_master_write_byte(cmd, (ADDRESS_BM180<<1) + 1, true);
+	i2c_master_read(cmd, data, len, I2C_MASTER_ACK);
+	i2c_master_stop(cmd);
+	i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000 / portTICK_PERIOD_MS);	
+	i2c_cmd_link_delete(cmd);
+}
+
+void write_byte_BMP180 (uint8_t addr, uint8_t byte){
+	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+	i2c_master_start(cmd);
+	i2c_master_write_byte(cmd, ADDRESS_BM180 <<1, true);
+	i2c_master_write_byte(cmd, addr, true);
+	i2c_master_write_byte(cmd, byte, true);
+	i2c_master_stop(cmd);
+	i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000 / portTICK_PERIOD_MS);
+	i2c_cmd_link_delete(cmd);
+}
+
+
+
+
+
 
 

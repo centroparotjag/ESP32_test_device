@@ -22,5 +22,6 @@ uint8_t read_byte_FM24CL04 (uint16_t addr);
 void write_byte_FM24CL04 (uint16_t addr, uint16_t byte);
 void write_data_FM24CL04 (uint16_t addr, uint8_t *data, uint16_t len);
 void read_data_FM24CL04 (uint16_t addr, uint8_t *data, uint16_t len);
-
+void read_data_BMP180 (uint16_t addr, uint8_t *data, uint8_t len);
+void write_byte_BMP180 (uint8_t addr, uint8_t byte);
 #endif /* MAIN_FOO_I2C_H_ */
