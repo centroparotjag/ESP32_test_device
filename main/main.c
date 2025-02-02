@@ -15,6 +15,11 @@
 #include "config_GPIO.h"
 #include "foo_I2C.h"
 #include "statistics.h"
+#include "LSM303DLHC.h"
+
+
+#define date __DATE__
+#define time __TIME__
 
 // loop task
 void loop_task(void *pvParameter)
@@ -33,46 +38,47 @@ void app_main(void)
     int Tmp; 
 	unsigned int Pr;
     sleep (1);
-	printf("Startup\n");
-	init_GPIO ();
-	i2c_master_init();
-	check_I2C_device ();
-	PowerOnCount_set_1_count_in_FRAM();
-	print_PowerOnCount();
-	counting_time_PowerOnHours();
-	print_Uptime();
-	xTaskCreate(&loop_task, "loop_task", 2048, NULL, 5, NULL);
-
+    printf("Firmware build: %s %s\n", date, time);
+    init_GPIO();
+    i2c_master_init();
+    check_I2C_device();
+    PowerOnCount_set_1_count_in_FRAM();
+    print_PowerOnCount();
+    counting_time_PowerOnHours();
+    print_Uptime();
+    xTaskCreate(&loop_task, "loop_task", 2048, NULL, 5, NULL);
+	config_LSM303 ();
 
     while (true) {
-		printf("\r\n");
-		print_PowerOnCount();
-		counting_time_PowerOnHours();
-		print_Uptime();
+//		printf("\r\n");
+//		print_PowerOnCount();
+//		counting_time_PowerOnHours();
+//		print_Uptime();
+//		
+//		
+//		LED_1_RGB (50, 0, 0);
+//		int status = get_T_Rh_DHT11 (&T, &Rh);
+//		LED_1_RGB (0, 0, 0);
+//		
+//		LED_2_RGB (0, 50, 0);
+//		READ_TEMPERATURE();
+//		LED_2_RGB (0, 0, 0);
+//		
+//		gpio_set_level(POW_DS_DH, 0);
+//		
+//		
+//		if(status==1) {
+//			printf("DHT11   T = %.1fC, Rh = %d%%\n", T, Rh);
+//		}
+//		
+//
+//		getPressure_BMP180 ( &Tmp, &Pr);
+//		float p_180 = (float)Pr/100;
+//		float t_180 = (float)Tmp/10;
+//		printf("BMP180  T = %0.1fC; P = %0.2fhPa; \r\n", t_180, p_180);
+		LSM303_print();
 		
-		
-		LED_1_RGB (50, 0, 0);
-		int status = get_T_Rh_DHT11 (&T, &Rh);
-		LED_1_RGB (0, 0, 0);
-		
-		LED_2_RGB (0, 50, 0);
-		READ_TEMPERATURE();
-		LED_2_RGB (0, 0, 0);
-		
-		gpio_set_level(POW_DS_DH, 0);
-		
-		
-		if(status==1) {
-			printf("DHT11   T = %.1fC, Rh = %d%%\n", T, Rh);
-		}
-		
-
-		getPressure_BMP180 ( &Tmp, &Pr);
-		float p_180 = (float)Pr/100;
-		float t_180 = (float)Tmp/10;
-		printf("BMP180  T = %0.1fC; P = %0.2fhPa; \r\n", t_180, p_180);
-		
-        sleep (10);
+        sleep (2);
 
 
 		

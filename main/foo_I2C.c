@@ -34,7 +34,7 @@
 
 #define ADDRESS_FM24CL04B	0xA0>>1 
 #define ADDRESS_BM180		0xEE>>1 
-#define ADDRESS_LSM303DLHC	0x32>>1 
+#define ADDRESS_LSM303DLHC	0x32>>1
 
 void i2c_master_init(void)
 {
@@ -162,39 +162,72 @@ void read_data_FM24CL04 (uint16_t addr, uint8_t *data, uint16_t len){
 	i2c_master_write_byte(cmd, address_ee, true);
 	i2c_master_start(cmd);
 	i2c_master_write_byte(cmd, address+1, true);
-	i2c_master_read(cmd, data, len, I2C_MASTER_ACK);
+	for(int16_t i = 0; i<(len-1); i++){
+		i2c_master_read_byte(cmd, &data[i], I2C_MASTER_ACK);
+	}
+	i2c_master_read_byte(cmd, &data[len-1], I2C_MASTER_NACK);
 	i2c_master_stop(cmd);
 	i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000 / portTICK_PERIOD_MS);	
 	i2c_cmd_link_delete(cmd);
 }
 
 
-//======================= BMP180 ===============================
-void read_data_BMP180 (uint16_t addr, uint8_t *data, uint8_t len){
+//======================= BMP180_LSM303 ===============================
+void read_data_BMP180_LSM303 (uint8_t addr, uint8_t reg, uint8_t *data, uint8_t len){
 	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, ADDRESS_BM180<<1, true);
 	i2c_master_write_byte(cmd, addr, true);
+	i2c_master_write_byte(cmd, reg, true);
 	
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, (ADDRESS_BM180<<1) + 1, true);
-	i2c_master_read(cmd, data, len, I2C_MASTER_ACK);
+	i2c_master_write_byte(cmd, addr + 1, true);
+		for(int16_t i = 0; i<(len-1); i++){
+		i2c_master_read_byte(cmd, &data[i], I2C_MASTER_ACK);
+	}
+	i2c_master_read_byte(cmd, &data[len-1], I2C_MASTER_NACK);
 	i2c_master_stop(cmd);
 	i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000 / portTICK_PERIOD_MS);	
 	i2c_cmd_link_delete(cmd);
 }
 
-void write_byte_BMP180 (uint8_t addr, uint8_t byte){
+void write_byte_BMP180_LSM303 (uint8_t addr, uint8_t reg, uint8_t byte){
 	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, ADDRESS_BM180 <<1, true);
 	i2c_master_write_byte(cmd, addr, true);
+	i2c_master_write_byte(cmd, reg, true);
 	i2c_master_write_byte(cmd, byte, true);
 	i2c_master_stop(cmd);
 	i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000 / portTICK_PERIOD_MS);
 	i2c_cmd_link_delete(cmd);
 }
 
+void write_data_BMP180_LSM303 (uint8_t addr, uint8_t reg, uint8_t *data, uint16_t len){
+	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+	i2c_master_start(cmd);
+	i2c_master_write_byte(cmd, addr, true);
+	i2c_master_write_byte(cmd, reg, true);
+	i2c_master_write(cmd, data, len, true);
+	i2c_master_stop(cmd);
+	i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000 / portTICK_PERIOD_MS);
+	i2c_cmd_link_delete(cmd);
+}
+
+uint8_t read_byte_BMP180_LSM303 (uint16_t addr, uint8_t reg){
+	uint8_t byte;
+	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+
+	i2c_master_start(cmd);
+	i2c_master_write_byte(cmd, addr, true);
+	i2c_master_write_byte(cmd, reg, true);
+	i2c_master_start(cmd);
+	i2c_master_write_byte(cmd, addr+1, true);
+	i2c_master_read_byte(cmd, &byte, I2C_MASTER_NACK);
+	i2c_master_stop(cmd);
+	i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000 / portTICK_PERIOD_MS);	
+	i2c_cmd_link_delete(cmd);
+	
+	return byte;
+}
 
 
 
