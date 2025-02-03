@@ -12,7 +12,7 @@
 
 uint32_t PowerOnHours_GET_FRAM (void);
 void PowerOnHours_update_set_RAM (void);
-void counting_time_PowerOnHours(void);
+void print_time_PowerOnHours(void);
 uint32_t PowerOnCount_GET_FRAM (void);
 void PowerOnCount_set_1_count_in_FRAM(void) ;
 void print_PowerOnCount(void);

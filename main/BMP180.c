@@ -15,7 +15,10 @@
 
 #define ADDR_BM180		0xEE 
 
-void getPressure_BMP180 (int* Tmp, unsigned int* Pr){
+extern int T_bmp180;
+extern unsigned int P_bmp180;
+
+void getPressure_BMP180 (void){
 	uint8_t data[22];
 	uint8_t c[2];
 	uint8_t cp[3];
@@ -56,7 +59,7 @@ void getPressure_BMP180 (int* Tmp, unsigned int* Pr){
  	long x2 = ((long)MC << 11)/(x1 + MD);
 	long B5 = x1 + x2;
 	long T = (B5+8) >> 4;
-	*Tmp = (int)T;
+	T_bmp180 = (int)T;
 	//printf("T = %lu;\r\n",  T);
 	
 	//---------- calculate true pressure ------------------
@@ -77,7 +80,15 @@ void getPressure_BMP180 (int* Tmp, unsigned int* Pr){
 	x1 = (x1 * 3038)>>16;
 	x2 = (-7357 * p)>>16;
 	p += (x1 + x2 + 3791)>>4;
-	*Pr = (unsigned int)p;
+	P_bmp180 = (unsigned int)p;
 	//printf("P_bmp180 = %lu;\r\n",  (long)p);
 }
+
+void BMP180_print_P_T (void){
+	float p_180 = (float)P_bmp180/100;
+	float t_180 = (float)T_bmp180/10;
+	printf("BMP180  T = %0.1fC; P = %0.2fhPa; \r\n", t_180, p_180);
+}
+
+
 

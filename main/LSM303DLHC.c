@@ -18,6 +18,15 @@
 #define ADDR_LSM303_ACCEL	0x32
 #define ADDR_LSM303_MAGN	0x3C
 
+extern int16_t accel_X; 
+extern int16_t accel_Y;
+extern int16_t accel_Z;
+extern int16_t mag_X; 
+extern int16_t mag_Y; 
+extern int16_t mag_Z;
+extern float compas;
+
+
 void config_LSM303 (void){
 	write_byte_BMP180_LSM303 (ADDR_LSM303_ACCEL,  0x20, 0x27);
 	write_byte_BMP180_LSM303 (ADDR_LSM303_ACCEL,  0x23, 0x00);
@@ -52,41 +61,34 @@ void read_LSM303_magn (int16_t* magn_X, int16_t* magn_Y, int16_t* magn_Z){
 	*magn_X = (data[0] << 8) + data[1];
 	*magn_Z = (data[2] << 8) + data[3];
 	*magn_Y = (data[4] << 8) + data[5];
-	 
-	//---- T !??? -----------------------------------------
-//	uint16_t T = 0;          
-//	data[0] = read_byte_BMP180_LSM303 (ADDR_LSM303_MAGN, 0x31); 
-//	data[1] = read_byte_BMP180_LSM303 (ADDR_LSM303_MAGN, 0x32);               
-//	T = (data[0] << 4) + (data[1]>>4) ;
-//	printf ("T LSM303 = %d\r\n", T/8);
 }
 
-void get_LSM303 (int16_t* a_X, int16_t* a_Y, int16_t* a_Z, int16_t* m_X, int16_t* m_Y, int16_t* m_Z){
+void get_LSM303 (void){
 	int16_t acell_X,  acell_Y,  acell_Z, magn_X, magn_Y, magn_Z;
+	float heading;
 
 	read_LSM303_acell (&acell_X, &acell_Y, &acell_Z);
 	read_LSM303_magn (&magn_X, &magn_Y, &magn_Z);
 	
-	*a_X = acell_X;
-	*a_Y = acell_Y;
-	*a_Z = acell_Z;
+	heading = (atan2(magn_X, magn_Y) * 180) / M_PI;
+	if (heading < 0) { heading = 360 + heading; }
 	
-	*m_X = magn_X;
-	*m_Y = magn_Y;
-	*m_Z = magn_Z;
-}
+	if (magn_Z < 0) { heading = 360 - heading; }  // inverted compass upside down
+	
+	accel_X = acell_X;
+	accel_Y = acell_Y;
+	accel_Z = acell_Z;
+	mag_X   = magn_X;
+	mag_Y   = magn_Y;
+	mag_Z   = magn_Z;
+	compas  = heading;
+} 
 
 void LSM303_print(void){
-	int16_t a_X, a_Y, a_Z, m_X, m_Y, m_Z;
-	
-	get_LSM303 (&a_X, &a_Y, &a_Z, &m_X, &m_Y, &m_Z);
-	printf ("Accelerometr X=%d, Y=%d, Z=%d\r\n", a_X, a_Y, a_Z);
-	printf ("Magnetometer X=%d, Y=%d, Z=%d\r\n", m_X, m_Y, m_Z);
-	
-	float heading = (atan2(m_X, m_Y) * 180) / M_PI;
-
-	if (heading < 0) {
-		heading = 360 + heading;
-	}
-	printf ("Compass %0.1f\r\n", heading);
+	printf ("Accelerometr X=%d, Y=%d, Z=%d\r\n", accel_X, accel_Y, accel_Z);
+	printf ("Magnetometer X=%d, Y=%d, Z=%d\r\n", mag_X, mag_Y, mag_Z);
+	printf ("Compass %0.1f\r\n", compas);
 }
+
+
+

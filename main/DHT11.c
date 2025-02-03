@@ -17,6 +17,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 
+extern uint8_t Rh_dht11;
+extern float T_dht11;
 
 void send_start_signal (void){
 	gpio_set_level(DQ_DH, 0);
@@ -78,16 +80,16 @@ int covert_data_DHT11 (const unsigned char* data, float *T, uint8_t *Rh){
 	return 1;
 }
 
-int get_T_Rh_DHT11 (float *T, uint8_t *Rh){
+int get_T_Rh_DHT11 (void){
 	uint8_t data[40] = {0};
 	float t;
 	uint8_t r;
 	uint8_t h = 0;
 	uint8_t l = 0;
 	
-	//----------- Power on --------------------------------------
-	gpio_set_level(POW_DS_DH, 1);
-	vTaskDelay(500/portTICK_PERIOD_MS);	//500ms
+//	//----------- Power on --------------------------------------
+//	gpio_set_level(POW_DS_DH, 1);
+//	vTaskDelay(500/portTICK_PERIOD_MS);	//500ms
 	//----------- Send start signal ------------------------------
 	send_start_signal ();
 	//----------- Read response signal ---------------------------
@@ -122,13 +124,19 @@ int get_T_Rh_DHT11 (float *T, uint8_t *Rh){
 	//----------- Power off --------------------------------------
 	//gpio_set_level(POW_DS_DH, 0);
 	//------------------------------------------------------------
-	int status = covert_data_DHT11 (&data, &t, &r);
+	int status = covert_data_DHT11 (data, &t, &r);
 	
-	*T = t;
-	*Rh = r;
+	Rh_dht11 = r;
+	T_dht11 = t;
+
 	return status;
 }
 	
+	
+void DHT11_print_Rh_T (void){
+	printf("DHT11   T = %.1fC, Rh = %d%%\n", T_dht11, Rh_dht11);	
+}	
+
 	
 
 	

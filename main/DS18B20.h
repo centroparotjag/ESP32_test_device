@@ -52,5 +52,5 @@ unsigned char start_t_convert_DS12B20(void);
 void time_out_convert_t(unsigned char  timer, unsigned char  conversial_period);
 void read_t_DS18B20_test(void);
 void t_ds18b20 (float* t, uint8_t h_b, uint8_t l_b);
-
+void DS18B20_print_T (void);
 #endif /* MAIN_DS18B20_H_ */

@@ -16,6 +16,8 @@
 #include <stdint.h>
 #include <unistd.h>
 
+extern float T_ds18b20;
+
 //---------------------- PRESENCE -----------------------------
 unsigned char DS18B20_RESET_PRESENCE(void)
 {
@@ -283,11 +285,13 @@ unsigned int read_t_after_convert_DS12B20(void) {
 void t_ds18b20 (float* t, uint8_t h_b, uint8_t l_b){
 	uint16_t t_src = (h_b<<8) + l_b;
 	if(t_src >= 0xFC90 ){			 // - negative T
-		*t = (0xffff - t_src + 1)*0.0625*(-1);
+		T_ds18b20 = (0xffff - t_src + 1)*0.0625*(-1);
 	}
 	else {							 // + positive T
-		*t = t_src*0.0625;
+		T_ds18b20 = t_src*0.0625;
 	}
+	
+	*t  = T_ds18b20;
 }
 
 
@@ -297,14 +301,14 @@ void t_ds18b20 (float* t, uint8_t h_b, uint8_t l_b){
 	uint8_t scratchpad[9];
 	float T;
 	//--------- CONVERT T -----------------------------------
-	if (DS18B20_RESET_PRESENCE()) {
-		return ERROR;									// error
-	}
-	else {}
-
-	WRITE_BYTE(SKIP_ROM);							// DQ, DATA
-	WRITE_BYTE(CONVERT_T);						// DQ, DATA
-	vTaskDelay(751/portTICK_PERIOD_MS);	// 751ms;
+//	if (DS18B20_RESET_PRESENCE()) {
+//		return ERROR;									// error
+//	}
+//	else {}
+//
+//	WRITE_BYTE(SKIP_ROM);							// DQ, DATA
+//	WRITE_BYTE(CONVERT_T);						// DQ, DATA
+//	vTaskDelay(751/portTICK_PERIOD_MS);	// 751ms;
 
 	//---------- READ T ------------------------------------
 	if (DS18B20_RESET_PRESENCE()) {
@@ -315,9 +319,17 @@ void t_ds18b20 (float* t, uint8_t h_b, uint8_t l_b){
 	int status = SCRATCHPAD_READ(scratchpad);
 
 	t_ds18b20 (&T, scratchpad[1], scratchpad[0]);
+	 
+	T_ds18b20 = T;  
 	
-	printf ("DS18B20 T = %.1fC\n", T);
+	//printf ("DS18B20 T = %.1fC\n", T);
 	
 	return status;
 }
+
+void DS18B20_print_T (void){
+	extern float T_ds18b20;
+	printf ("DS18B20 T = %.1fC\n", T_ds18b20);
+}
+
 

@@ -34,7 +34,7 @@ void PowerOnHours_update_set_RAM (void){
 	write_data_FM24CL04(PowerOnHours, data, 4);
 }
 
-void counting_time_PowerOnHours(void){
+void print_time_PowerOnHours(void){
 	uint32_t s = PowerOnHours_GET_FRAM ();
 	uint32_t H, m, sec;
 	
