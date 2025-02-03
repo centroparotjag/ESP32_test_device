@@ -22,7 +22,6 @@ extern float T_ds18b20;
 unsigned char DS18B20_RESET_PRESENCE(void)
 {
 	unsigned char STATUS_PRESENCE;
-	gpio_set_level(POW_DS_DH, 1);
 	gpio_set_level(DQ_DS, 1);
 	vTaskDelay(10/portTICK_PERIOD_MS);	// 1ms;
 	gpio_set_level(DQ_DS, 0);			// 0

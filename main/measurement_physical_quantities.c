@@ -23,7 +23,7 @@
 #include "statistics.h"
 
 #define cicle 10
-uint8_t flag = 0;
+uint8_t flag = 255;
 uint8_t test = 0;
 
 
@@ -43,15 +43,13 @@ void state_machine_measurement (void){
 	extern uint8_t tic;
 	
 	//---- TEST ------------
-	if ((tic == 1) && (flag != tic)) {
+	if ((tic == 3) && (flag != tic)) {
 		print_all_param ();
 		flag = tic;
 	}
 	//---- TEST -----------
 	
-
-
-	if ((tic == (cicle-2)) && (flag != tic)) {
+	if ((tic == 0) && (flag != tic)) {
 		//----------- Power on DS18B20, DHT11 -------
 		gpio_set_level(POW_DS_DH, 1);
 		//- BMP180 read P, T  -
@@ -62,27 +60,32 @@ void state_machine_measurement (void){
 		flag = tic;
 	}
 	
-
-	if ((tic == (cicle-1)) && (flag != tic)) {
+	if ((tic == 1) && (flag != tic)) {
 		//- DS18B20 configuration and start conversion temperature -
 		TEST_AND_WRITE_DEFAULT_SRAM();
-		vTaskDelay(1/portTICK_PERIOD_MS);	//1ms;
+		vTaskDelay(10/portTICK_PERIOD_MS);	//1ms;
 		start_t_convert_DS12B20();
 		//- DHT11 read Rh., T.
 		get_T_Rh_DHT11 ();
 		//-------
 		flag = tic;
 	}
-	
-	
-	if ((tic >= (cicle)) && (flag != tic)) {
+		
+	if ((tic == 2) && (flag != tic)) {
 		//---- read T - DS18B20 --------------
 		READ_TEMPERATURE();
 		//----------- Power off DS18B20, DHT11 -------
+		vTaskDelay(10/portTICK_PERIOD_MS);	//1ms;
 		gpio_set_level(POW_DS_DH, 0);
+		flag = tic;
+	}
+	
+
+	
+	if (tic >= cicle) {
 		//----- reset state machine ---------------
 		tic = 0; 
-		flag = 0;
+		flag = 255;
 	}
 
 }

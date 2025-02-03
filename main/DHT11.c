@@ -22,7 +22,7 @@ extern float T_dht11;
 
 void send_start_signal (void){
 	gpio_set_level(DQ_DH, 0);
-	vTaskDelay(25/portTICK_PERIOD_MS);
+	usleep (25000);
 	gpio_set_level(DQ_DH, 1);
 }
 

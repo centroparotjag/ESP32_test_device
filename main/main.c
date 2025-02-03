@@ -14,14 +14,11 @@ void loop_task(void *pvParameter)
 void app_main(void)
 {
     sleep (1);
-    printf("Firmware build: %s %s\n", __DATE__, __TIME__);
+    printf("\r\nStartup\r\nFirmware build: %s %s\r\n", __DATE__, __TIME__);
     init_GPIO();
     i2c_master_init();
     check_I2C_device();
     PowerOnCount_set_1_count_in_FRAM();
-    //counting_time_PowerOnHours();
-    //print_PowerOnCount();
-    //print_Uptime();
     xTaskCreate(&loop_task, "loop_task", 2048, NULL, 5, NULL);
 	config_LSM303 ();
 
