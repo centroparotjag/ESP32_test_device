@@ -35,7 +35,8 @@ int get_data_bit_DHT11 (void){
 		usleep (1);
 		if(i==0xff){break;}
 		
-	}		
+	}	
+		
 	i=0;
 	while( gpio_get_level(DQ_DH) == 1){ 		// we count the time of high |-| state 
 		i++;
@@ -73,6 +74,7 @@ int covert_data_DHT11 (const unsigned char* data, float *T, uint8_t *Rh){
 	//---------- CRC Check -----------------
 	if (crc_check_DHT11 (data_Byte) < 1 ){
 		printf ("CRC DHT11 - ERROR!\n");
+		return -1;
 	}
 	*Rh = data_Byte[0];
 	float tmp = data_Byte[3];
@@ -93,24 +95,38 @@ int get_T_Rh_DHT11 (void){
 	//----------- Send start signal ------------------------------
 	send_start_signal ();
 	//----------- Read response signal ---------------------------
-	while( gpio_get_level(DQ_DH) == 1){			// |¯|  
-		h++;
-		usleep (1);
-		if(h==0xff){break;}
+//	while( gpio_get_level(DQ_DH) == 1){			// |¯|  
+//		h++;
+//		usleep (1);
+//		if(h==0xff){break;}
+//	}
+//	while( gpio_get_level(DQ_DH) == 0){			// |_|
+//		l++;
+//		usleep (1);
+//		if(l==0xff){break;}
+//	}
+//	//---------- response signal check ----------------------------
+//	if ( (h>4 && h<40) && (l>40 && l<80) ){
+//		// response - ok!
+//	}
+//	else {
+//		printf ("ERROR - DHT11 not response signal!!!\n");
+//		return -1;
+//	}
+
+	usleep (50);								// 60u
+	if(gpio_get_level(DQ_DH) != 0){
+		printf ("ERROR - DHT11 not response signal!!!\n");
+		return -1;
 	}
+
 	while( gpio_get_level(DQ_DH) == 0){			// |_|
 		l++;
 		usleep (1);
 		if(l==0xff){break;}
 	}
-	//---------- response signal check ----------------------------
-	if ( (h>4 && h<40) && (l>40 && l<80) ){
-		// response - ok!
-	}
-	else {
-		printf ("ERROR - DHT11 not response signal!!!\n");
-		return -1;
-	}
+
+
 	l = 0;
 	while( gpio_get_level(DQ_DH) == 1){ // |¯|
 		l++;
@@ -125,11 +141,14 @@ int get_T_Rh_DHT11 (void){
 	//gpio_set_level(POW_DS_DH, 0);
 	//------------------------------------------------------------
 	int status = covert_data_DHT11 (data, &t, &r);
+	if(status < 0) {
+		return -1;
+	}
 	
 	Rh_dht11 = r;
 	T_dht11 = t;
 
-	return status;
+	return 1;
 }
 	
 	

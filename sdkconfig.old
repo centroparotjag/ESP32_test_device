@@ -387,8 +387,39 @@ CONFIG_PARTITION_TABLE_MD5=y
 #
 # Example Configuration
 #
-CONFIG_ESP_WIFI_SSID="myssid"
-CONFIG_ESP_WIFI_PASSWORD="mypassword"
+
+#
+# SoftAP Configuration
+#
+
+#
+# SoftAP Configuration
+#
+CONFIG_ESP_WIFI_AP_SSID="myssid"
+CONFIG_ESP_WIFI_AP_PASSWORD="qwerty12"
+CONFIG_ESP_WIFI_AP_CHANNEL=1
+CONFIG_ESP_MAX_STA_CONN_AP=4
+# end of SoftAP Configuration
+
+#
+# STA Configuration
+#
+
+#
+# STA Configuration
+#
+CONFIG_ESP_WIFI_REMOTE_AP_SSID="Erestor"
+CONFIG_ESP_WIFI_REMOTE_AP_PASSWORD="qwerty12"
+CONFIG_ESP_MAXIMUM_STA_RETRY=5
+# CONFIG_ESP_WIFI_AUTH_OPEN is not set
+# CONFIG_ESP_WIFI_AUTH_WEP is not set
+# CONFIG_ESP_WIFI_AUTH_WPA_PSK is not set
+CONFIG_ESP_WIFI_AUTH_WPA2_PSK=y
+# CONFIG_ESP_WIFI_AUTH_WPA_WPA2_PSK is not set
+# CONFIG_ESP_WIFI_AUTH_WPA3_PSK is not set
+# CONFIG_ESP_WIFI_AUTH_WPA2_WPA3_PSK is not set
+# CONFIG_ESP_WIFI_AUTH_WAPI_PSK is not set
+# end of STA Configuration
 # end of Example Configuration
 
 #

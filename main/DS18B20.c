@@ -19,7 +19,7 @@
 extern float T_ds18b20;
 
 //---------------------- PRESENCE -----------------------------
-unsigned char DS18B20_RESET_PRESENCE(void)
+int DS18B20_RESET_PRESENCE(void)
 {
 	unsigned char STATUS_PRESENCE;
 	gpio_set_level(DQ_DS, 1);
@@ -31,9 +31,10 @@ unsigned char DS18B20_RESET_PRESENCE(void)
 	STATUS_PRESENCE = gpio_get_level(DQ_DS);
 	if(STATUS_PRESENCE == 1){
 		printf("ERROR - DS18B20 not presence!!!");
+		return -1;
 	}
 	usleep (600);								// 600u
-	return STATUS_PRESENCE;
+	return 1;
 }
 
 //----------------- MASTER WRITE SLOT ------------------------
@@ -142,14 +143,15 @@ int SCRATCHPAD_READ(unsigned char* skratchpad) {
 }
 
 //----------------------- TEST AND WRITE DEFAULT STATE SRAM -------------
-unsigned char TEST_AND_WRITE_DEFAULT_SRAM(void) {
+int TEST_AND_WRITE_DEFAULT_SRAM(void) {
 	unsigned char scratchpad[9];
 	unsigned char i, CONFIG_RESOLUTION;
 	CONFIG_RESOLUTION = RESOLUTION_12b;			// SET DEFAULT RESOLUTION
-	if (DS18B20_RESET_PRESENCE()) {
-		return ERROR;							// error
+	if (DS18B20_RESET_PRESENCE()==-1) {
+		printf("ERROR - DS18B20 not presence2!!!");
+		return -1;							// error
 	}
-	else {}
+
 
 	//--------------- READ SCRATCHPAD ----------------------------
 	i = 0;
@@ -162,7 +164,10 @@ unsigned char TEST_AND_WRITE_DEFAULT_SRAM(void) {
 	else {}
 
 	//================= NEW SEQUENCE WRITE SCRATCHPAD ===================
-	DS18B20_RESET_PRESENCE();
+	if (DS18B20_RESET_PRESENCE()==-1) {
+		printf("ERROR - DS18B20 not presence3!!!");
+		return -1;							// error
+	}
 
 	WRITE_BYTE(SKIP_ROM);					// DQ, DATA
 	WRITE_BYTE(WRITE_SCRATCHPAD);			// DQ, DATA
@@ -171,7 +176,10 @@ unsigned char TEST_AND_WRITE_DEFAULT_SRAM(void) {
 	WRITE_BYTE(0x46);						// DQ, Tl (default manufacture). SRAM 0x03
 	WRITE_BYTE(CONFIG_RESOLUTION);			// DQ, config. 				     SRAM 0x04
 
-	DS18B20_RESET_PRESENCE();
+	if (DS18B20_RESET_PRESENCE()==-1) {
+		printf("ERROR - DS18B20 not presence4!!!");
+		return -1;							// error
+	}
 
 	if (!SCRATCHPAD_READ(scratchpad)) {				//READ SCRATCHPAD and CRC CHECK
 		return 255;
@@ -185,13 +193,17 @@ unsigned char TEST_AND_WRITE_DEFAULT_SRAM(void) {
 	else {}
 
 	//================== SAVE ROM in SRAM ==============================
-	DS18B20_RESET_PRESENCE();
+	if (DS18B20_RESET_PRESENCE()==-1) {
+		printf("ERROR - DS18B20 not presence5!!!");
+		return -1;							// error
+	}
+	
 	WRITE_BYTE(SKIP_ROM);					// DQ, DATA
 	WRITE_BYTE(COPY_SCRATCHPAD);			// DQ, DATA
 
 	usleep (1);
 
-	return OK;							   // OK write SRAM
+	return 1;							   // OK write SRAM
 }
 
 //*********************** READ ROM 64b *********************************************
@@ -257,25 +269,25 @@ void time_out_convert_t(unsigned char  timer, unsigned char  conversial_period) 
 }
 
 
-unsigned char start_t_convert_DS12B20(void) {
+int start_t_convert_DS12B20(void) {
 	//--------- CONVERT T -----------------------------------
-	if (DS18B20_RESET_PRESENCE()) {
-		return 0;					// error
+	if (DS18B20_RESET_PRESENCE()==-1) {
+		printf("ERROR - DS18B20 not presence6!!!");
+		return -1;							// error
 	}
-	else {}
 
 	WRITE_BYTE(SKIP_ROM);				// DQ, DATA  0xCC
 	WRITE_BYTE(CONVERT_T);				// DQ, DATA 0x44
 	return 1;
 }
 
-unsigned int read_t_after_convert_DS12B20(void) {
+int read_t_after_convert_DS12B20(void) {
 	unsigned char scratchpad[9]; 
 	//---------- READ T ------------------------------------
-	if (DS18B20_RESET_PRESENCE()) {
-		return 0;							// error
+	if (DS18B20_RESET_PRESENCE()==-1) {
+		printf("ERROR - DS18B20 not presence7!!!");
+		return -1;							// error
 	}
-	else {}
 
 	return SCRATCHPAD_READ(scratchpad);
 }
@@ -310,12 +322,16 @@ void t_ds18b20 (float* t, uint8_t h_b, uint8_t l_b){
 //	vTaskDelay(751/portTICK_PERIOD_MS);	// 751ms;
 
 	//---------- READ T ------------------------------------
-	if (DS18B20_RESET_PRESENCE()) {
-		return ERROR;							// error
+	if (DS18B20_RESET_PRESENCE()==-1) {
+		printf("ERROR - DS18B20 not presence8!!!");
+		return -1;							// error
 	}
-	else {}
 
 	int status = SCRATCHPAD_READ(scratchpad);
+	if(status ==-1) {
+		printf("ERROR - DS18B20 SCRATCHPAD_READ2!!!");
+		return -1;
+	}
 
 	t_ds18b20 (&T, scratchpad[1], scratchpad[0]);
 	 
